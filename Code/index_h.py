@@ -60,17 +60,17 @@ def visualize_top_authors(top_authors):
             ha='left', va='center',
             xytext=(7, 0),
             textcoords='offset points',
-            fontsize=12,
+            fontsize=19,
             fontweight='bold'
         )
 
     # Customization
-    plt.title('Top 10 Authors by H-Index', fontsize=22, fontweight='bold', pad=20)
-    plt.xlabel('H-Index', fontsize=16, fontweight='bold')
-    plt.ylabel('', fontsize=16)
+    plt.title('Top 10 Authors by H-Index', fontsize=18, fontweight='bold', pad=20)
+    plt.xlabel('H-Index', fontsize=22, fontweight='bold')
+    plt.ylabel('', fontsize=22)
     plt.xlim(0, top_authors['H-Index'].max() + 3)
-    plt.xticks(fontsize=14)
-    plt.yticks(fontsize=14)
+    plt.xticks(fontsize=18)
+    plt.yticks(fontsize=18)
 
     # Add a background grid but only for horizontal lines
     ax.yaxis.grid(True, linestyle='--', alpha=0.6)
@@ -108,4 +108,8 @@ if __name__ == "__main__":
 ~                                                                                                                                                                                                                              
 ~                                                                                                                                                                                                                              
 ~                                                                                                                                                                                                                              
-~                                                                     
+~                                                                                                                                                                                                                              
+~                                                                                                                                                                                                                              
+~                                                                                                                                                                                                                              
+~                                                                                                                                                                                                                              
+~                                                                                       
