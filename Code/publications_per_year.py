@@ -2,61 +2,98 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# Set modern style configuration
-sns.set_theme(style="whitegrid", palette="husl")
-plt.rcParams.update({'font.size': 12, 'axes.titlesize': 16, 'axes.labelsize': 14})
+def calculate_annual_citation_metrics(df):
+    # Filter and calculate metrics
+    cited_articles = df[df['Cited by'] > 0].copy()
 
-def load_and_process_data(file_path):
-    """Load and preprocess citation data"""
-    try:
-        df = pd.read_csv(file_path)
-        df['Cited by'] = pd.to_numeric(df['Cited by'], errors='coerce').fillna(0).astype(int)
-        return df
-    except Exception as e:
-        print(f"Data loading error: {str(e)}")
-        exit()
+    annual_metrics = cited_articles.groupby('Year').agg(
+        Total_Citations=('Cited by', 'sum'),
+        Cited_Articles=('Cited by', 'count')
+    ).reset_index()
 
-def visualize_citations(df):
-    """Generate citation visualizations"""
-    # Calculate metrics
-    total = df.groupby('Year')['Cited by'].sum().reset_index()
-    avg = df.groupby('Year')['Cited by'].mean().round(2).reset_index()
+    annual_metrics['Citations_Per_Article'] = annual_metrics['Total_Citations'] / annual_metrics['Cited_Articles']
+    annual_metrics['Year'] = annual_metrics['Year'].astype(str)  # Convert to category
 
-    # Create figure
-    fig, ax = plt.subplots(2, 1, figsize=(12, 10))
+    return annual_metrics
 
-    # Total citations plot
-    sns.lineplot(data=total, x='Year', y='Cited by', ax=ax[0],
-                marker='o', markersize=8, linewidth=2.5)
-    ax[0].set_title('Total Citations by Publication Year', pad=20)
-    ax[0].set_ylabel('Total Citations')
+def visualize_metrics(metrics):
+    # Create figure and primary axis
+    fig, ax1 = plt.subplots(figsize=(14, 7))
 
-    # Average citations plot
-    sns.barplot(data=avg, x='Year', y='Cited by', ax=ax[1],
-               edgecolor='black', linewidth=1)
-    ax[1].set_title('Average Citations per Article', pad=20)
-    ax[1].set_ylabel('Average Citations')
+    # Bar chart on primary axis
+    sns.barplot(
+        x='Year',
+        y='Total_Citations',
+        data=metrics,
+        color='#3498DB',
+        alpha=0.7,
+        label='Total Citations',
+        ax=ax1
+    )
 
+    ax1.set_xlabel('Publication Year', fontsize=14, fontweight='bold')
+    ax1.set_ylabel('Total Citations', fontsize=14, fontweight='bold', color='#3498DB')
+    ax1.tick_params(axis='y', labelcolor='#3498DB', labelsize=12)
+    ax1.tick_params(axis='x', labelsize=12)
+
+    # Create a second Y-axis that shares the same X-axis
+    ax2 = ax1.twinx()
+
+    # Line chart on secondary axis
+    line = sns.lineplot(
+        x='Year',
+        y='Citations_Per_Article',
+        data=metrics,
+        marker='o',
+        color='#E74C3C',
+        linewidth=3,
+        markersize=12,
+        label='Citations/Cited Article',
+        ax=ax2
+    )
+
+    ax2.set_ylabel('Citations per Article', fontsize=14, fontweight='bold', color='#E74C3C')
+    ax2.tick_params(axis='y', labelcolor='#E74C3C', labelsize=12)
+
+    # Chart title
+    fig.suptitle('Citation Metrics by Publication Year', fontsize=18, fontweight='bold', y=0.98)
+
+    # Add grid to primary chart
+    ax1.grid(linestyle=':', alpha=0.7)
+
+    # Get legends from both axes
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+
+    # Remove individual legends
+    ax1.get_legend().remove() if ax1.get_legend() else None
+    ax2.get_legend().remove() if ax2.get_legend() else None
+
+    # Create a combined legend with larger font
+    ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper right', fontsize=12)
+
+    # Rotate X-axis labels
+    plt.xticks(rotation=45)
+
+    # Adjust spacing
     plt.tight_layout()
+
+    # Show the chart
     plt.show()
 
-    return total, avg
-
-def display_results(total, avg):
-    """Display formatted results"""
-    print("\n📈 Citation Analysis Report")
-    print("="*40)
-    print(f"{'Year':<8} | {'Total Citations':<15} | {'Avg Citations':<15}")
-    print("-"*40)
-    for t, a in zip(total.itertuples(), avg.itertuples()):
-        print(f"{t.Year:<8} | {t._2:<15} | {a._2:<15.2f}")
-
 # Main execution
-if __name__ == "__main__":
-    df = load_and_process_data("Scopus_VR_ED_only_2024.csv")
-    total, avg = visualize_citations(df)
-    display_results(total, avg)
-~                                                                                                                                                                                                                              
+df = pd.read_csv("Scopus_VR_ED_only_2024.csv")
+df['Cited by'] = pd.to_numeric(df['Cited by'], errors='coerce').fillna(0).astype(int)
+annual_metrics = calculate_annual_citation_metrics(df)
+
+print("📊 Detailed Metrics:")
+print(annual_metrics.round(2))
+print("\n🔍 Statistical Summary:")
+print(annual_metrics.describe().round(2))
+
+# Visualize with improved axes
+visualize_metrics(annual_metrics)
+                                                                                                                                                                        
 ~                                                                                                                                                                                                                              
 ~                                                                                                                                                                                                                              
 ~                                                                                                                                                                                                                              
