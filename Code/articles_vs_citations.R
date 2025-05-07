@@ -40,10 +40,10 @@ tryCatch({
     ) +
     theme_minimal() +
     theme(
-      plot.title = element_text(hjust = 0.5, face = "bold", size = 16),
-      axis.title = element_text(face = "bold", size = 14),
-      axis.text = element_text(size = 12),
-      axis.ticks = element_line(size = 1.2),
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 22),
+      axis.title = element_text(face = "bold", size = 20),
+      axis.text = element_text(size = 20),
+      axis.ticks = element_line(size = 10.2),
       axis.ticks.length = unit(0.2, "cm"),
       panel.grid.major = element_line(size = 0.5)
     )
