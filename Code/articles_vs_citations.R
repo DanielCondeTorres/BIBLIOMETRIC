@@ -91,6 +91,17 @@ tryCatch({
     cat("Percentage of articles with zero citations:", percent_zero, "%\n")
   }
   
+  # Find and display information about the most cited article
+  most_cited_article <- M_filtered[which.max(M_filtered$TC), ]
+  
+  cat("\n=== Most Cited Article ===\n")
+  cat("Title:", most_cited_article$TI, "\n")
+  cat("Authors:", most_cited_article$AU, "\n")
+  cat("Journal:", most_cited_article$SO, "\n")
+  cat("Year:", most_cited_article$PY, "\n")
+  cat("DOI:", most_cited_article$DI, "\n")
+  cat("Number of citations:", most_cited_article$TC, "\n")
+  
 }, error = function(e) {
   # If there's an error reading the file, create example data
   cat("Error reading the file:", e$message, "\n")
@@ -163,4 +174,15 @@ tryCatch({
   if(min_citation == 0) {
     cat("Percentage of articles with zero citations:", percent_zero, "%\n")
   }
+  
+  # Note about most cited article when using example data
+  cat("\n=== Most Cited Article ===\n")
+  cat("Note: Since we're using example data, we cannot display the actual most cited article.\n")
+  cat("With real data, this section would show details like:\n")
+  cat("- Title of the most cited article\n")
+  cat("- Authors\n")
+  cat("- Journal\n")
+  cat("- Year of publication\n")
+  cat("- DOI\n")
+  cat("- Exact number of citations\n")
 })
